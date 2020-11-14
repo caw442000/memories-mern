@@ -1,4 +1,6 @@
 import React from 'react'
+import useStyles from './styles'
+
 
 const Post = () => {
   return (
