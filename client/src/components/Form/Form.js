@@ -37,8 +37,7 @@ const Form = ({ currentId, setCurrentId }) => {
     }
   };
   const clear = () => {
-    // console.log("ref", imageInputRef.current.value)
-    setCurrentId(0);
+    setCurrentId(null);
     setPostData({
       creator: "",
       title: "",
@@ -49,12 +48,9 @@ const Form = ({ currentId, setCurrentId }) => {
     // this is how you reset uncontrolled com
     document.getElementById("create-course-form").reset();
     //https://stackoverflow.com/questions/43922508/clear-and-reset-form-input-fields
-    // imageInputRef.current.value = ""
+
   };
 
-  // function handleClick() {
-  //   ref.current.value = ""
-  // }
 
   return (
     <Paper className={classes.paper}>
