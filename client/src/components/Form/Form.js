@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextField, Button, Typography, Paper } from "@material-ui/core";
 import FileBase from "react-file-base64";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 
 import useStyles from "./styles";
-import { createPost } from "../../actions/posts";
+import { createPost, updatePost } from "../../actions/posts";
 
-const Form = () => {
+const Form = ({ currentId, setCurrentId }) => {
+  // const imageInputRef = React.useRef();
   const [postData, setPostData] = useState({
     creator: "",
     title: "",
@@ -14,27 +15,59 @@ const Form = () => {
     tags: "",
     selectedFile: "",
   });
+  const post = useSelector((state) =>
+    currentId ? state.posts.find((p) => p._id === currentId) : null
+  );
 
   const classes = useStyles();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    if (post) setPostData(post);
+  }, [post]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    dispatch(createPost(postData))
-
+    if (currentId) {
+      await dispatch(updatePost(currentId, postData));
+      clear();
+    } else {
+      await dispatch(createPost(postData));
+      clear();
+    }
   };
-  const clear = () => {};
+  const clear = () => {
+    // console.log("ref", imageInputRef.current.value)
+    setCurrentId(0);
+    setPostData({
+      creator: "",
+      title: "",
+      message: "",
+      tags: "",
+      selectedFile: "",
+    });
+    // this is how you reset uncontrolled com
+    document.getElementById("create-course-form").reset();
+    //https://stackoverflow.com/questions/43922508/clear-and-reset-form-input-fields
+    // imageInputRef.current.value = ""
+  };
+
+  // function handleClick() {
+  //   ref.current.value = ""
+  // }
 
   return (
     <Paper className={classes.paper}>
       <form
+        id="create-course-form"
         autoComplete="off"
         noValidate
         className={`${classes.root} ${classes.form}`}
         onSubmit={handleSubmit}
       >
-        <Typography variant="h6">Creating A Memory</Typography>
+        <Typography variant="h6">
+          {currentId ? "Editing" : "Creating"} A Memory
+        </Typography>
         <TextField
           name="creator"
           variant="outlined"
@@ -75,13 +108,31 @@ const Form = () => {
           <FileBase
             type="file"
             multiple={false}
+            value = {postData.selectedFile}
             onDone={({ base64 }) =>
               setPostData({ ...postData, selectedFile: base64 })
             }
           />
         </div>
-        <Button className={classes.buttonSubmit} variant="contained" color="primary" size="large" type="submit" fullWidth>Submit</Button>
-        <Button  variant="contained" color="secondary" size="small" onClick={clear} fullWidth>Clear</Button>
+        <Button
+          className={classes.buttonSubmit}
+          variant="contained"
+          color="primary"
+          size="large"
+          type="submit"
+          fullWidth
+        >
+          Submit
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          size="small"
+          onClick={clear}
+          fullWidth
+        >
+          Clear
+        </Button>
       </form>
     </Paper>
   );

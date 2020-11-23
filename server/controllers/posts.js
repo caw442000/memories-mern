@@ -1,5 +1,5 @@
-import PostMessage from '../models/postMessage.js';
 import mongoose from 'mongoose';
+import PostMessage from '../models/postMessage.js';
 
 
 
@@ -30,18 +30,23 @@ export const createPost = async (req, res) => {
 
 export const updatePost = async (req, res) => {
   const { id: _id } = req.params;
-  const { title, message, creator, selectedFile, tags } = req.body;
+  // const { title, message, creator, selectedFile, tags } = req.body;
+
+  const post = req.body;
+
+  console.log("requ", req.body)
 
   // _id is mongoose id
 
   if(!mongoose.Types.ObjectId.isValid(_id)) {
-    return res.status(404).sent(`No post with that ${id}`)
+    return res.status(404).sent(`No post with that id`)
+    // return res.status(404).sent(`No post with that ${id}`)
     
   }
 
-  const updatedPost = { creator, title, message, tags, selectedFile, _id: id };
+  // const updatedPost = { creator, title, message, tags, selectedFile, _id: id };
 
-  await PostMessage.findByIdAndUpdate(id, updatedPost, {new: true})
+  const updatedPost = await PostMessage.findByIdAndUpdate(_id, {...post, _id}, {new: true})
   res.json(updatedPost)
 
 }
