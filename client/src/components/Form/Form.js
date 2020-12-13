@@ -29,10 +29,25 @@ const Form = ({ currentId, setCurrentId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (currentId) {
-      await dispatch(updatePost(currentId, postData));
+      try {
+
+        await dispatch(updatePost(currentId, postData));
+
+      } catch (error) {
+
+        console.log(error)
+      }
       clear();
     } else {
-      await dispatch(createPost(postData));
+
+      try {
+
+        await dispatch(createPost(postData));
+
+      } catch (error) {
+
+        console.log(error)
+      }
       clear();
     }
   };
